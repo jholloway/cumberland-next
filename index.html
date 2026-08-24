@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="Review and standardize Nashville.gov text content.">
+    <title>Cumberland Next</title>
+    <link rel="stylesheet" href="styles.css">
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div>
+          <h1>Cumberland <em class="title-next">Next</em></h1>
+          <p class="intro">Cumberland Next helps you review and standardize text content before posting. Follow the guided prompts to work your way through text. Some issues can be fixed automatically while others require manual review. This tool can make mistakes, so please use it carefully.</p>
+        </div>
+        <div class="header-actions">
+          <button id="analyzeButton" class="button button-primary" type="button">Analyze</button>
+          <button id="copyButton" class="button button-secondary" type="button">Copy text</button>
+        </div>
+      </header>
+
+      <section class="workspace" aria-label="Text review workspace">
+        <div class="editor-panel">
+          <div class="panel-heading">
+            <div>
+              <h2>Text to review</h2>
+              <p>Issues remain highlighted as you work through them.</p>
+            </div>
+            <span id="characterCount" class="character-count">0 characters</span>
+          </div>
+
+          <div class="editor-shell">
+            <pre id="highlightLayer" class="highlight-layer" aria-hidden="true"><code id="highlightContent"></code></pre>
+            <textarea id="editor" class="editor" spellcheck="true" aria-label="Text to review" placeholder="Paste text here..."></textarea>
+          </div>
+        </div>
+
+        <aside class="issues-panel" aria-labelledby="issuesHeading">
+          <div class="panel-heading">
+            <div>
+              <h2 id="issuesHeading">Issues</h2>
+              <p id="issueSummary">Each card shows the proposed change; the explanation for the current issue appears in the review panel.</p>
+            </div>
+          </div>
+          <div id="statusMessage" class="status-message" role="status" aria-live="polite"></div>
+          <ol id="issueList" class="issue-list"></ol>
+          <div id="currentActions" class="current-actions" aria-live="polite"></div>
+        </aside>
+      </section>
+
+      <footer class="app-footer">
+        <button id="themeToggle" class="button button-secondary theme-toggle" type="button" aria-label="Switch to dark mode" title="Switch to dark mode" aria-pressed="false">
+          <span id="themeIcon" class="theme-icon" aria-hidden="true">☾</span>
+        </button>
+      </footer>
+    </main>
+
+    <!-- Classic rule scripts are the single enablement manifest and load before its collector. -->
+    <script src="src/rules/time-rule.js"></script>
+    <script src="src/rules/date-rule.js"></script>
+    <script src="src/rules/caps-rule.js"></script>
+    <script src="src/rules/expansion-rule.js"></script>
+    <script src="src/rules/bullet-rule.js"></script>
+    <script src="src/rules/extra-space-rule.js"></script>
+    <script src="src/rules/phone-rule.js"></script>
+    <script src="src/rules/street-name-rule.js"></script>
+    <script src="src/rules/ampersand-rule.js"></script>
+    <script src="src/rules/trailing-whitespace-rule.js"></script>
+    <script src="src/rules/link-text-rule.js"></script>
+    <script src="src/rules/raw-url-rule.js"></script>
+    <script src="src/rules/range-dash-rule.js"></script>
+    <script src="src/rules/small-number-rule.js"></script>
+    <script src="src/rules/measurement-rule.js"></script>
+    <script src="src/rules/blank-line-rule.js"></script>
+    <script src="src/rules/repeated-word-rule.js"></script>
+    <script src="src/rules/street-direction-rule.js"></script>
+    <script src="src/rules/enabled-rules.js"></script>
+    <script src="src/rules/rule-registry.js"></script>
+    <script src="src/review/review-session.js"></script>
+    <script src="src/app.js"></script>
+  </body>
+</html>

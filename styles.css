@@ -1,0 +1,533 @@
+:root {
+  color-scheme: light;
+  --ink: #172033;
+  --muted: #5e6878;
+  --border: #cbd3df;
+  --border-strong: #9da9b9;
+  --surface: #ffffff;
+  --surface-muted: #f4f6f9;
+  --page-background: #edf1f5;
+  --accent: #005ea8;
+  --accent-dark: #004b86;
+  --accent-contrast: #ffffff;
+  --button-hover: #eef2f6;
+  --issue: #f7d77a;
+  --issue-current: #f19b38;
+  --issue-manual: #e2d4f7;
+  --issue-manual-current: #c9a6f0;
+  --issue-skipped: #d8dee8;
+  --current-surface: #fff8ea;
+  --success: #236b45;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Keep these values synchronized with the system-default dark block below;
+   this selector handles an explicit user choice. */
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --ink: #e8edf5;
+  --muted: #aab6c7;
+  --border: #3c4a5e;
+  --border-strong: #65758c;
+  --surface: #1d2735;
+  --surface-muted: #273345;
+  --page-background: #111923;
+  --accent: #72b7f2;
+  --accent-dark: #9acbfa;
+  --accent-contrast: #102131;
+  --button-hover: #344256;
+  --issue: #806b2b;
+  --issue-current: #c7772d;
+  --issue-manual: #55407e;
+  --issue-manual-current: #9a6fe0;
+  --issue-skipped: #48566b;
+  --current-surface: #3b3024;
+  --success: #7bd1a0;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --ink: #e8edf5;
+    --muted: #aab6c7;
+    --border: #3c4a5e;
+    --border-strong: #65758c;
+    --surface: #1d2735;
+    --surface-muted: #273345;
+    --page-background: #111923;
+    --accent: #72b7f2;
+    --accent-dark: #9acbfa;
+    --accent-contrast: #102131;
+    --button-hover: #344256;
+    --issue: #806b2b;
+    --issue-current: #c7772d;
+    --issue-manual: #55407e;
+    --issue-manual-current: #9a6fe0;
+    --issue-skipped: #48566b;
+    --current-surface: #3b3024;
+    --success: #7bd1a0;
+  }
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  color: var(--ink);
+  background: var(--page-background);
+}
+
+button,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+.app-shell {
+  width: min(1400px, calc(100% - 40px));
+  margin: 0 auto;
+  padding: 40px 0 24px;
+}
+
+.app-header,
+.panel-heading,
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.app-header {
+  align-items: flex-end;
+  margin-bottom: 24px;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  margin-bottom: 8px;
+  font-size: clamp(1.8rem, 3vw, 2.4rem);
+  letter-spacing: -0.03em;
+}
+
+.title-next {
+  font-style: italic;
+  font-weight: 300;
+}
+
+h2 {
+  margin-bottom: 5px;
+  font-size: 1rem;
+}
+
+.intro,
+.panel-heading p {
+  margin-bottom: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.header-actions {
+  flex-shrink: 0;
+}
+
+.button {
+  min-height: 42px;
+  padding: 0 17px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-weight: 650;
+}
+
+.button:focus-visible,
+.issue-action:focus-visible,
+.option-link:focus-visible,
+.editor:focus-visible {
+  outline: 3px solid rgba(0, 94, 168, 0.35);
+  outline-offset: 2px;
+}
+
+.button-primary {
+  color: var(--accent-contrast);
+  background: var(--accent);
+}
+
+.button-primary:hover {
+  background: var(--accent-dark);
+}
+
+.button-secondary {
+  color: var(--ink);
+  border-color: var(--border-strong);
+  background: var(--surface);
+}
+
+.button-secondary:hover {
+  background: var(--surface-muted);
+}
+
+.theme-toggle {
+  width: 44px;
+  padding: 0;
+}
+
+.theme-icon {
+  display: block;
+  font-size: 1.25rem;
+  line-height: 1;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 380px);
+  gap: 20px;
+}
+
+.editor-panel,
+.issues-panel {
+  min-width: 0;
+  height: 620px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--surface);
+  box-shadow: 0 2px 8px rgba(23, 32, 51, 0.04);
+  display: flex;
+  flex-direction: column;
+}
+
+.panel-heading {
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.character-count {
+  flex-shrink: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+/* The highlight layer and textarea must share typography and dimensions so their
+   text stays aligned while the native textarea remains the source of truth. */
+.editor-shell {
+  position: relative;
+  min-height: 440px;
+  overflow: hidden;
+  border: 1px solid var(--border-strong);
+  border-radius: 5px;
+  background: var(--surface);
+}
+
+.highlight-layer,
+.editor {
+  width: 100%;
+  min-height: 440px;
+  margin: 0;
+  padding: 16px;
+  border: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
+  font-size: 0.94rem;
+  line-height: 1.6;
+  letter-spacing: normal;
+  tab-size: 4;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+}
+
+.highlight-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  color: var(--ink);
+  pointer-events: none;
+}
+
+.highlight-layer code {
+  font: inherit;
+}
+
+.editor {
+  position: relative;
+  display: block;
+  resize: vertical;
+  overflow: auto;
+  color: transparent;
+  caret-color: var(--ink);
+  background: transparent;
+}
+
+.editor::selection {
+  color: transparent;
+  background: rgba(0, 94, 168, 0.22);
+}
+
+.issue-highlight {
+  border-radius: 3px;
+  background: var(--issue);
+  box-shadow: 0 0 0 1px rgba(137, 92, 0, 0.12);
+}
+
+.issue-highlight.is-current {
+  background: var(--issue-current);
+  box-shadow: 0 0 0 2px rgba(147, 77, 0, 0.35);
+}
+
+.issue-highlight.is-skipped {
+  background: var(--issue-skipped);
+  box-shadow: 0 0 0 1px rgba(82, 96, 116, 0.25);
+}
+
+.issue-highlight.is-current.is-skipped {
+  background: var(--issue-current);
+  box-shadow: 0 0 0 2px rgba(147, 77, 0, 0.35);
+}
+
+.issue-highlight.is-manual:not(.is-skipped) {
+  background: var(--issue-manual);
+  box-shadow: 0 0 0 1px rgba(110, 60, 200, 0.18);
+}
+
+.issue-highlight.is-manual.is-current:not(.is-skipped) {
+  background: var(--issue-manual-current);
+  box-shadow: 0 0 0 2px rgba(96, 42, 198, 0.35);
+}
+
+.status-message {
+  min-height: 24px;
+  margin-bottom: 10px;
+  color: var(--success);
+  font-size: 0.88rem;
+  font-weight: 650;
+}
+
+.issue-list {
+  min-height: 0;
+  flex: 1 1 auto;
+  display: grid;
+  gap: 10px;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.issue-card {
+  padding: 13px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface-muted);
+}
+
+.issue-card.is-current {
+  border-color: var(--issue-current);
+  background: var(--current-surface);
+}
+
+.issue-card.is-skipped {
+  border-color: var(--border-strong);
+}
+
+.issue-card.is-current.is-skipped {
+  border-color: var(--issue-current);
+  background: var(--current-surface);
+}
+
+.issue-card.is-auto {
+  border-left: 4px solid var(--issue-current);
+}
+
+.issue-card.is-manual {
+  border-left: 4px solid var(--issue-manual-current);
+}
+
+.issue-card.is-stale {
+  opacity: 0.55;
+}
+
+.issue-edited {
+  margin: 3px 0 0;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-style: italic;
+}
+
+.issue-card-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.issue-card h3 {
+  margin: 0;
+  font-size: 0.88rem;
+}
+
+.issue-explanation {
+  margin: 0 0 12px;
+  color: var(--ink);
+  font-size: 0.82rem;
+  line-height: 1.45;
+}
+
+.issue-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.secondary-options {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.78rem;
+}
+
+.option-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  text-decoration: underline;
+}
+
+.option-link:disabled,
+.issue-action:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.issue-waiting {
+  color: var(--muted);
+  font-size: 0.78rem;
+  font-style: italic;
+}
+
+/* Reserve the action area so changing issue explanations cannot move the buttons. */
+.current-actions {
+  display: flex;
+  min-height: 155px;
+  flex: 0 0 155px;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 5px;
+  margin-top: 16px;
+  padding-top: 14px;
+  border-top: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.current-actions-label {
+  margin: 0;
+  color: var(--accent);
+  font-size: 0.72rem;
+  font-weight: 750;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.current-actions-title {
+  margin: 0;
+  font-size: 0.94rem;
+}
+
+.current-actions-explanation,
+.current-actions-message {
+  min-height: 34px;
+  max-height: 48px;
+  margin: 0;
+  overflow: auto;
+  color: var(--muted);
+  font-size: 0.8rem;
+  line-height: 1.4;
+}
+
+.current-actions-message {
+  min-height: auto;
+  max-height: none;
+}
+
+.issue-action {
+  min-height: 34px;
+  padding: 0 10px;
+  border: 1px solid var(--border-strong);
+  border-radius: 4px;
+  color: var(--ink);
+  background: var(--surface);
+  font-size: 0.78rem;
+  font-weight: 650;
+}
+
+.issue-action:hover {
+  background: var(--button-hover);
+}
+
+.issue-action-primary {
+  border-color: var(--accent);
+  color: var(--accent-contrast);
+  background: var(--accent);
+}
+
+.issue-action-primary:hover {
+  background: var(--accent-dark);
+}
+
+.app-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 16px;
+  padding-top: 16px;
+}
+
+@media (max-width: 840px) {
+  .app-shell {
+    width: min(100% - 24px, 700px);
+    padding-top: 24px;
+  }
+
+  .app-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .header-actions {
+    width: 100%;
+  }
+
+  .header-actions .button {
+    flex: 1;
+  }
+
+  .app-footer {
+    align-items: flex-end;
+    flex-direction: column-reverse;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .issues-panel {
+    height: 520px;
+  }
+
+  .editor-shell,
+  .highlight-layer,
+  .editor {
+    min-height: 340px;
+  }
+}

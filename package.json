@@ -1,0 +1,7 @@
+{
+  "name": "cumberland-next",
+  "private": true,
+  "scripts": {
+    "test": "node --test"
+  }
+}
