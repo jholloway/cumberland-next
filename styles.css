@@ -250,7 +250,7 @@ h2 {
   position: absolute;
   inset: 0;
   overflow: hidden;
-  color: var(--ink);
+  color: transparent;
   pointer-events: none;
 }
 
@@ -263,13 +263,13 @@ h2 {
   display: block;
   resize: vertical;
   overflow: auto;
-  color: transparent;
+  color: var(--ink);
   caret-color: var(--ink);
   background: transparent;
 }
 
 .editor::selection {
-  color: transparent;
+  color: var(--ink);
   background: rgba(0, 94, 168, 0.22);
 }
 
@@ -519,6 +519,10 @@ h2 {
 
   .workspace {
     grid-template-columns: 1fr;
+  }
+
+  .editor-panel {
+    height: auto;
   }
 
   .issues-panel {

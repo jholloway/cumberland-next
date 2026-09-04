@@ -21,7 +21,12 @@
   // last known text and hand the session a single changed region.
   let knownEditorValue = "";
   let pendingEditorEdit = null;
+  let pendingViewportResize = null;
   let manuallySelectedTheme = false;
+  const characterSegmenter =
+    typeof Intl !== "undefined" && typeof Intl.Segmenter === "function"
+      ? new Intl.Segmenter(undefined, { granularity: "grapheme" })
+      : null;
 
   function applyTheme(theme) {
     document.documentElement.dataset.theme = theme;
@@ -42,8 +47,16 @@
     statusMessage.textContent = message;
   }
 
+  function countCharacters(value) {
+    if (!characterSegmenter) return Array.from(value).length;
+
+    let count = 0;
+    for (const segment of characterSegmenter.segment(value)) count += 1;
+    return count;
+  }
+
   function updateCharacterCount() {
-    const count = editor.value.length;
+    const count = countCharacters(editor.value);
     characterCount.textContent = `${count.toLocaleString()} character${count === 1 ? "" : "s"}`;
   }
 
@@ -95,7 +108,14 @@
     });
 
     fragment.appendChild(createTextNode(editor.value.slice(cursor)));
+    // A preformatted element does not create a line box after its final line
+    // break, while a textarea does. Give the mirror an invisible character on
+    // that last empty line so both elements keep the same scroll height.
+    if (editor.value.endsWith("\n")) fragment.appendChild(createTextNode("\u200b"));
     highlightContent.replaceChildren(fragment);
+    // Replacing the mirror contents can change its scroll range. Re-apply the
+    // textarea's authoritative position after the new content is in place.
+    syncScroll();
   }
 
   function renderIssues() {
@@ -367,6 +387,16 @@
     highlightLayer.scrollLeft = editor.scrollLeft;
   }
 
+  function handleViewportResize() {
+    if (pendingViewportResize !== null) cancelAnimationFrame(pendingViewportResize);
+    pendingViewportResize = requestAnimationFrame(() => {
+      pendingViewportResize = null;
+      syncScroll();
+      scrollActiveIssueIntoView();
+      scrollCurrentCardIntoView();
+    });
+  }
+
   function editRangeForInput(previousValue, currentValue) {
     // A collapsed beforeinput selection identifies a caret, not the characters
     // removed by Backspace/Delete. Reconstruct that old-text range from the
@@ -420,6 +450,7 @@
     updateCharacterCount();
   });
   editor.addEventListener("scroll", syncScroll);
+  window.addEventListener("resize", handleViewportResize);
 
   const systemThemeQuery = window.matchMedia ? window.matchMedia("(prefers-color-scheme: dark)") : null;
   applyTheme(systemTheme());
