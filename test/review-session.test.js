@@ -167,3 +167,28 @@ test("automatic fixes fall back to the default without a choice", () => {
   const result = session.applyAutomaticFix("abc tail");
   assert.equal(result.text, "x tail");
 });
+
+test("boundary edits invalidate automatic fixes without discarding unrelated findings", () => {
+  const expansionRule = require("../src/rules/expansion-rule.js");
+  for (const [after, range] of [
+    ["TNT and TN", { start: 2, end: 2 }],
+    ["ATN and TN", { start: 0, end: 0 }],
+  ]) {
+    const session = createReviewSession(expansionRule);
+    session.scan("TN and TN");
+    const state = session.adjustForEdit("TN and TN", after, range);
+    assert.deepEqual(state.issues.map(issue => issue.stale), [true, false]);
+    assert.equal(session.applyAutomaticFix(after).text, after);
+    session.skip();
+    assert.equal(session.applyAutomaticFix(after).text, after.replace(/TN$/, "Tennessee"));
+  }
+});
+
+test("context changes outside a finding invalidate its automatic replacement", () => {
+  const measurementRule = require("../src/rules/measurement-rule.js");
+  const session = createReviewSession(measurementRule);
+  session.scan("10 ft tall");
+  const state = session.adjustForEdit("10 ft tall", "ten ft tall", { start: 0, end: 2 });
+  assert.equal(state.currentIssue.stale, true);
+  assert.equal(session.applyAutomaticFix("ten ft tall").text, "ten ft tall");
+});

@@ -32,8 +32,9 @@ The enabled behavior is defined in the [rule catalog](rules.md).
 - A successful resolution advances to the next finding.
 - An automatic fix changes only the matched text and adjusts later finding positions.
 - A manual finding remains confirmable after the user edits it.
-- Editing one part of the text does not discard unrelated findings. A finding whose original text changed is marked as edited and cannot be fixed automatically.
+- Editing one part of the text does not discard unrelated findings. A finding whose original text or matching context changed is marked as edited and cannot be fixed automatically.
 - Skipped findings remain highlighted and return for reconsideration after the queue cycles.
+- Direct edits mark the analysis as outdated and prompt the user to Analyze for new issues, including when the previous scan had no findings.
 - **Analyze** always starts a fresh review from the editor's current text. Previous skips and resolution states do not carry over.
 - Empty, whitespace-only, and compliant input produces a clear “No issues found” message.
 - **Copy text** copies exactly what is in the editor, including user edits and skipped findings.

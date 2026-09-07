@@ -42,7 +42,7 @@
   return {
     id: "R-012",
     name: "Flag raw URLs",
-    priority: 200,
+    priority: 300,
     detect,
   };
 });

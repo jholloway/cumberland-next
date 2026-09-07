@@ -73,3 +73,8 @@ test("applies through the review session with offset adjustment", () => {
   state = session.applyAutomaticFix(text);
   assert.equal(state.text, "bring three forms");
 });
+
+test("does not spell out fractional digits in decimal numbers", () => {
+  assert.deepEqual(replacements("1.5 acres, 0.5 miles, .5 gallons, $2.05, 10.1 feet"), []);
+  assert.deepEqual(replacements("Area: 1.5 acres with 3 trees"), [["3", "three"]]);
+});

@@ -83,3 +83,8 @@ test("does not duplicate a period following a meridiem time", () => {
   assert.equal(issue.original, "7 PM.");
   assert.equal(issue.replacement, "7 p.m.");
 });
+
+test("does not partially rewrite times with seconds", () => {
+  assert.deepEqual(replacements("12:30:45 07:02:30 PM 07:02:30.500 7:02:30 AM"), []);
+  assert.deepEqual(replacements("12:30:45, then 19:00."), [["19:00.", "7:00 p.m."]]);
+});

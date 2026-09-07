@@ -74,9 +74,9 @@ A new analysis creates a fresh session from the editor's current text.
 
 JavaScript string positions are UTF-16 offsets. `start` is inclusive and `end` is exclusive.
 
-Before a textarea edit, the page records the selected prior-text range and input type. The session verifies that evidence against the unchanged prefix and suffix, shifts later findings by the edit's length difference, and compares every finding's recorded source with the live text.
+Before a textarea edit, the page records the selected prior-text range and input type. The session verifies that evidence against the unchanged prefix and suffix, shifts later findings by the edit's length difference, and compares every finding's recorded source with the live text. Detectors run for validation only: an existing finding must still match its rule, range, replacement, and alternate options. This catches changed boundaries and surrounding context without adding new findings or resetting review decisions.
 
-Unaffected findings remain active. A finding whose source changed becomes stale: it is dimmed, no longer highlighted, and cannot be changed automatically. Manual confirmation remains available because it does not apply a recorded replacement. If the browser cannot describe one contiguous edit, the session falls back to a shared-prefix/shared-suffix comparison.
+Unaffected findings remain active. A finding whose source or matching context changed becomes stale: it is dimmed, no longer highlighted, and cannot be changed automatically. Manual confirmation remains available because it does not apply a recorded replacement. If the browser cannot describe one contiguous edit, the session falls back to a shared-prefix/shared-suffix comparison.
 
 These checks preserve the identity of adjacent or repeated findings and prevent an automatic fix from modifying the wrong text.
 

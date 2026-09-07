@@ -49,7 +49,7 @@
     const next = text.slice(end, end + 48);
     const before = text.slice(Math.max(0, index - 32), index);
 
-    if (previous && "+-/:&$#@".includes(previous)) return true;
+    if (previous && ".+-/:&$#@".includes(previous)) return true;
     if (/^[.:),/]/.test(next)) return true;
     // A hyphenated adjective such as `10-ft` is a compound, not prose.
     if (/^-[A-Za-z]/.test(next)) return true;

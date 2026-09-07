@@ -29,9 +29,10 @@
     "august|aug|september|sept|sep|october|oct|november|nov|december|dec)";
   const ORDINAL_SUFFIX = "(?:st|nd|rd|th)";
 
-  // `23 June`, `23rd of June`, `23 June 2026`.
+  // `23 June`, `23rd of June`, `23 June 2026`. Consume an abbreviation
+  // period only before a year; otherwise preserve sentence punctuation.
   const DAY_FIRST_BRANCH =
-    `\\b(\\d{1,2})${ORDINAL_SUFFIX}?\\b\\s+(?:of\\s+)?${MONTH_PATTERN}(?![a-z])`;
+    `\\b(\\d{1,2})${ORDINAL_SUFFIX}?\\b\\s+(?:of\\s+)?${MONTH_PATTERN}(?![a-z])(?:\\.(?=(?:,\\s*|\\s)\\d{4}\\b))?`;
 
   // `Jun. 23rd`, `June 23rd, 2026`, `JUNE 23`. A sentence period after the
   // day is left for surrounding text.

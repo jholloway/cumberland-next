@@ -57,3 +57,17 @@ test("the production manifest satisfies the strict registry contract together", 
     "R-007",
   ]);
 });
+
+test("URLs shield their contents from every enabled automatic rule", () => {
+  const registry = createRuleRegistry(productionRulesFromIndex().rules);
+  for (const url of [
+    "https://example.com/TN/details",
+    "https://example.com/Main/Rd/details",
+    "https://example.com/6/23/2026?q=6155550100&unit=10ft",
+  ]) {
+    const findings = registry.detect(`${url} TN`);
+    assert.deepEqual(findings.map(({ ruleId, original }) => [ruleId, original]), [
+      ["R-012", url], ["R-004", "TN"],
+    ]);
+  }
+});

@@ -24,7 +24,7 @@ Add a decision only when its rationale would not be clear from the product, arch
 
 ## Preserve unaffected findings after edits
 
-**Decision:** A direct edit shifts later finding positions and revalidates every finding against the live text. Only a finding whose source changed becomes stale. Automatic fixes are disabled for stale findings; manual confirmation remains available.
+**Decision:** A direct edit shifts later finding positions and revalidates every finding against the live text. A finding whose source or matching context changed becomes stale. Detectors validate existing findings after direct edits without adding new findings or resetting review decisions. Automatic fixes are disabled for stale findings; manual confirmation remains available.
 
 The page uses the textarea's pre-edit selection when possible so adjacent or identical findings retain their identity. The session refuses an automatic replacement if its target no longer matches.
 
@@ -40,7 +40,7 @@ The page uses the textarea's pre-edit selection when possible so adjacent or ide
 
 **Decision:** A higher-priority finding suppresses a lower-priority overlapping finding for that scan. Equal-priority overlaps are resolved by rule ID. Accepted findings are then reviewed in document order.
 
-Priority 100 is the default. Priority 200 is used when a broader or safer finding intentionally shields its contents.
+Priority 100 is the default. Priority 200 is used when a broader or safer finding intentionally shields its contents. Raw URLs use priority 300 so automatic abbreviation rules cannot modify their paths or query strings.
 
 **Why:** Two actions must never target the same characters, and the result must be deterministic without coupling rules together.
 

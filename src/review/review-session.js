@@ -96,6 +96,12 @@
 
       const editRange = validatedEditRange(previousText, currentText, suppliedRange);
       const delta = currentText.length - previousText.length;
+      // Re-detect for validation only: keep queue identity and decisions, and
+      // never add new findings until Analyze. Context can change even when
+      // the matched substring is untouched (TN becoming TNT, for example).
+      const liveIssues = new Map(rule.detect(currentText).map((issue) => [
+        `${issue.ruleId}:${issue.start}:${issue.end}`, issue,
+      ]));
 
       issues.forEach((issue) => {
         const wasStale = issue.stale;
@@ -116,6 +122,11 @@
         const inBounds = issue.start >= 0 && issue.end <= currentText.length;
         const originalStillMatches =
           inBounds && currentText.slice(issue.start, issue.end) === issue.original;
+        const liveIssue = liveIssues.get(`${issue.ruleId}:${issue.start}:${issue.end}`);
+        const contextStillMatches = liveIssue &&
+          liveIssue.original === issue.original &&
+          liveIssue.replacement === issue.replacement &&
+          JSON.stringify(liveIssue.options) === JSON.stringify(issue.options);
 
         if (wasStale && !touchedByEdit) {
           // Do not silently bind a stale occurrence to identical text that
@@ -123,7 +134,7 @@
           // (including undo) may still restore it below.
           issue.stale = true;
         } else {
-          issue.stale = !originalStillMatches || (touchedByEdit && !wasStale);
+          issue.stale = !originalStillMatches || !contextStillMatches || (touchedByEdit && !wasStale);
         }
       });
 

@@ -74,7 +74,9 @@ For changes to the DOM, styles, editor, scrolling, focus, themes, clipboard, or 
 - Keyboard focus moves to the next available action.
 - The active editor highlight and queue card scroll into view only when needed.
 - Direct edits stale only affected findings; unrelated findings remain usable.
-- Stale automatic findings do not offer any automatic replacement.
+- Stale automatic findings do not offer any automatic replacement, including after boundary edits such as `TN` becoming `TNT`.
+- Editing previously clean text prompts a new analysis instead of continuing to report no issues.
+- Long URL findings wrap inside the queue and current-action panel; action buttons remain reachable.
 - Skipped findings remain available when the queue cycles.
 - A fresh analysis rebuilds the queue from the current text.
 - Copy text copies the exact editor contents.

@@ -8,13 +8,14 @@
 })(typeof globalThis === "object" ? globalThis : this, function createTimeRule() {
   // Evaluate meridiem forms first so the numeric part of `07:02 PM` is not
   // reported a second time by the 24-hour pattern below.
-  const MERIDIEM_TIME = /\b(\d{1,2})(?:(:|\.)(\d{2}))?\s*(A\.?M\.?|P\.?M\.?)(?!\w)/gi;
+  // Colon/dot guards prevent matching components inside a time with seconds.
+  const MERIDIEM_TIME = /(?<![\w:.])\b(\d{1,2})(?:(:|\.)(\d{2}))?\s*(A\.?M\.?|P\.?M\.?)(?!\w)/gi;
 
   // Requiring two-digit hours keeps ambiguous forms such as `7:00` out of
   // this rule while still recognizing valid colon-separated 24-hour times.
   // A following sentence period is consumed so the normalized `a.m.`/`p.m.`
   // ending supplies the single period, mirroring the meridiem pattern above.
-  const TWENTY_FOUR_HOUR_TIME = /\b(?:[01]\d|2[0-3]):[0-5]\d\b\.?/g;
+  const TWENTY_FOUR_HOUR_TIME = /(?<![\w:.])\b(?:[01]\d|2[0-3]):[0-5]\d\b(?![:.]\d)\.?/g;
 
   function normalizeMeridiem(value) {
     return value.toUpperCase().startsWith("A") ? "a.m." : "p.m.";

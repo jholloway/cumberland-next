@@ -371,6 +371,7 @@ h2 {
 }
 
 .issue-card h3 {
+  overflow-wrap: anywhere;
   margin: 0;
   font-size: 0.88rem;
 }
@@ -416,11 +417,11 @@ h2 {
   font-style: italic;
 }
 
-/* Reserve the action area so changing issue explanations cannot move the buttons. */
+/* Reserve a minimum action area and allow longer findings to fit above the buttons. */
 .current-actions {
   display: flex;
   min-height: 155px;
-  flex: 0 0 155px;
+  flex: 0 0 auto;
   flex-direction: column;
   justify-content: flex-end;
   gap: 5px;
@@ -440,6 +441,10 @@ h2 {
 }
 
 .current-actions-title {
+  overflow-wrap: anywhere;
+  max-height: 72px;
+  overflow: auto;
+  flex-shrink: 0;
   margin: 0;
   font-size: 0.94rem;
 }

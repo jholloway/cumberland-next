@@ -17,6 +17,7 @@
   let state = session.snapshot();
   let hasAnalyzed = false;
   let initialIssueCount = 0;
+  let analysisOutdated = false;
   // Mirrors the editor contents so each input event can diff against the
   // last known text and hand the session a single changed region.
   let knownEditorValue = "";
@@ -264,6 +265,11 @@
       return;
     }
 
+    if (analysisOutdated && !state.issues.length) {
+      setStatus("Text changed since analysis. Analyze to check for new issues.");
+      return;
+    }
+
     if (!initialIssueCount) {
       setStatus("No issues found.");
       return;
@@ -279,7 +285,8 @@
     setStatus(
       `Reviewing ${state.currentIndex + 1} of ${state.issues.length}` +
         ` · ${state.issues.length} remaining · ${resolvedCount} resolved` +
-        (editedCount ? ` · ${editedCount} edited` : "")
+        (editedCount ? ` · ${editedCount} edited` : "") +
+        (analysisOutdated ? " · Text changed; Analyze to check for new issues." : "")
     );
   }
 
@@ -356,6 +363,7 @@
     state = session.scan(editor.value);
     knownEditorValue = editor.value;
     hasAnalyzed = true;
+    analysisOutdated = false;
     initialIssueCount = state.issues.length;
     render();
   }
@@ -439,8 +447,9 @@
     const editRange = editRangeForInput(previousValue, editor.value);
     knownEditorValue = editor.value;
     if (hasAnalyzed) {
+      if (previousValue !== editor.value) analysisOutdated = true;
       // Edits slide and re-validate findings instead of invalidating the
-      // whole scan; only occurrences whose text changed become stale.
+      // whole scan; changed source text or matching context makes a finding stale.
       state = session.adjustForEdit(previousValue, editor.value, editRange);
     }
     renderHighlights();

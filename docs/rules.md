@@ -19,7 +19,7 @@ For the implementation process, see [Adding a rule](adding-a-rule.md).
 | R-009 | Replace ampersands | Automatic | 100 | [`ampersand-rule.js`](../src/rules/ampersand-rule.js) |
 | R-010 | Remove trailing whitespace | Automatic | 200 | [`trailing-whitespace-rule.js`](../src/rules/trailing-whitespace-rule.js) |
 | R-011 | Flag weak link text | Manual | 200 | [`link-text-rule.js`](../src/rules/link-text-rule.js) |
-| R-012 | Flag raw URLs | Manual | 200 | [`raw-url-rule.js`](../src/rules/raw-url-rule.js) |
+| R-012 | Flag raw URLs | Manual | 300 | [`raw-url-rule.js`](../src/rules/raw-url-rule.js) |
 | R-013 | Convert range dashes | Automatic | 100 | [`range-dash-rule.js`](../src/rules/range-dash-rule.js) |
 | R-014 | Spell out small numbers | Automatic | 100 | [`small-number-rule.js`](../src/rules/small-number-rule.js) |
 | R-015 | Expand measurements | Automatic | 200 | [`measurement-rule.js`](../src/rules/measurement-rule.js) |
@@ -52,7 +52,7 @@ Times use lowercase `a.m.` or `p.m.`, and the hour has no leading zero. If the s
 | `00:30` | `12:30 a.m.` |
 | `12:00` | `12:00 p.m.` |
 
-**Leaves unchanged:** `noon`, `midnight`, standalone meridiem markers, `1900`, `19.00`, and an ambiguous time without a meridiem such as `7:00`.
+**Leaves unchanged:** `noon`, `midnight`, standalone meridiem markers, `1900`, `19.00`, and an ambiguous time without a meridiem such as `7:00`, and times containing seconds such as `12:30:45` or `07:02:30 PM`. These longer times are left whole rather than partially rewritten.
 
 **Developer notes:** Both sides of a range are separate findings. R-013 handles the separator between them.
 
@@ -69,7 +69,7 @@ Dates use a full title-cased month, a numeric day without a leading zero or ordi
 | `23rd of June` | `June 23` |
 | `JUNE 23RD` | `June 23` |
 
-All twelve months are recognized by full name or common abbreviation, including `Sept`. A bare-space year is normalized to comma form.
+All twelve months are recognized by full name or common abbreviation, including `Sept`. A bare-space year is normalized to comma form. Day-first abbreviated dates also retain their year: `23 Jun. 2026` becomes `June 23, 2026`. An abbreviation period without a following year remains as surrounding punctuation.
 
 Numeric slash dates are treated as US month-first when both positions are plausible. An unambiguous day-first form such as `23/6` is converted.
 
@@ -221,7 +221,7 @@ The match continues to the next whitespace and includes a query string. Sentence
 
 **Leaves unchanged:** Addresses without a scheme, such as `www.example.com`, and other schemes such as `ftp://`.
 
-**Developer notes:** Priority 200 makes the URL one finding and suppresses date-like, phone-like, or all-caps fragments inside it.
+**Developer notes:** Priority 300 makes the URL one finding and suppresses all overlapping automatic findings, including state and street abbreviations as well as date-like, phone-like, and all-caps fragments.
 
 ## R-013: Convert range dashes
 
@@ -246,7 +246,7 @@ Bare numerals from 1 through 10 become lowercase words when they appear to be pr
 | `I have 3 apples` | `I have three apples` |
 | `choose 1` | `choose one` |
 
-**Leaves unchanged:** Times, dates, phone fragments, numeric ranges and chains, list markers, street-address numbers, currency or symbol-prefixed numbers, ordinals such as `1st`, and numbers above ten.
+**Leaves unchanged:** Decimal numbers (including fractional digits in `1.5` and `.5`), times, dates, phone fragments, numeric ranges and chains, list markers, street-address numbers, currency or symbol-prefixed numbers, ordinals such as `1st`, and numbers above ten.
 
 Month-adjacent numbers are treated conservatively, so an ambiguous expression such as `May 5` remains unchanged. Identifier-like prose without a structural signal, such as `Section 3`, is still flagged and may be skipped.
 

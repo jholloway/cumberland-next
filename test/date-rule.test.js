@@ -111,3 +111,12 @@ test("flags matching text wherever it occurs and reports exact ranges", () => {
   assert.equal(issue.original, text.slice(issue.start, issue.end));
   assert.equal(issue.replacement, "June 23");
 });
+
+test("consumes a day-first abbreviation period only when joining a year", () => {
+  assert.deepEqual(replacements("23 Jun. 2026 | 23rd of Sept., 2026"), [
+    ["23 Jun. 2026", "June 23, 2026"],
+    ["23rd of Sept., 2026", "September 23, 2026"],
+  ]);
+  assert.deepEqual(replacements("Ends 23 Jun. Next meeting follows."), [["23 Jun", "June 23"]]);
+  assert.deepEqual(replacements("29 Feb. 2025"), []);
+});
